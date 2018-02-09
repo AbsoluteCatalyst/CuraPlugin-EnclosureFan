@@ -1,0 +1,7 @@
+{
+    "name": "Enclosure Fan",
+    "author": "Pheneeny",
+    "version": "1.0.0",
+    "description": "Control an enclosure exhaust fan",
+    "api": 4
+}
