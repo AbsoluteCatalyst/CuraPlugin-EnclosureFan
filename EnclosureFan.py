@@ -14,7 +14,7 @@ from UM.i18n import i18nCatalog
 i18n_catalog = i18nCatalog("DefaultTemperatureOffset")
 
 
-class PrintTemperatureOffset(Extension):
+class EnclosureFan(Extension):
     def __init__(self):
         super().__init__()
 
@@ -26,22 +26,24 @@ class PrintTemperatureOffset(Extension):
         self._fan_on_dict = {
             "label": "Fan On Command",
             "description": "Command to issue to turn fan on. This will depend on your firmware and configuration. For Marlin, 'M106 P1' will usually enable the second fan defined. For smoothieware, you can define the M code or subcode to control a fan, such as M106.1",
-            "type": "string",
+            "type": "str",
             "unit": "",
             "default_value": "M106 P1",
+            "enabled":"enclosure_fan_enable",
             "settable_per_mesh": False,
             "settable_per_extruder": False,
             "settable_per_meshgroup": False,
         }
         self._post_printing_speed_key = "enclosure_fan_post_print_speed"
         self._post_printing_speed_dict = {
-            "label": "After Printing Complete Speed",
+            "label": "Speed After Printing Complete",
             "description": "Speed to set enclosure fan to after printing has completed",
             "type": "float",
             "unit": "%",
             "default_value": 0,
             "minimum_value": 0,
             "maximum_value": 100,
+            "enabled": "enclosure_fan_enable",
             "settable_per_mesh": False,
             "settable_per_extruder": False,
             "settable_per_meshgroup": False
@@ -55,6 +57,7 @@ class PrintTemperatureOffset(Extension):
             "default_value": 0,
             "minimum_value": 0,
             "maximum_value": 100,
+            "enabled": "enclosure_fan_enable",
             "settable_per_mesh": False,
             "settable_per_extruder": False,
             "settable_per_meshgroup": False
@@ -87,7 +90,7 @@ class PrintTemperatureOffset(Extension):
             # skip extruder definitions
             return
 
-        self.create_and_attach_setting(container, self._setting_key, self._setting_dict, "material")
+        self.create_and_attach_setting(container, self._setting_key, self._setting_dict, "cooling")
         self.create_and_attach_setting(container, self._printing_speed_key, self._printing_speed_dict, self._setting_key)
         self.create_and_attach_setting(container, self._post_printing_speed_key, self._post_printing_speed_dict, self._setting_key)
         self.create_and_attach_setting(container, self._fan_on_key, self._fan_on_dict, self._setting_key)
@@ -101,18 +104,20 @@ class PrintTemperatureOffset(Extension):
         # get settings from Cura
 
         enclosure_fan_enabled = self._global_container_stack.getProperty(self._setting_key, "value")
-        printing_fan_speed = self._global_container_stack.getProperty(self._printing_speed_key, "value")
-        post_printing_fan_speed = self._global_container_stack.getProperty(self._post_printing_speed_key, "value")
-        fan_on_command = self._global_container_stack.getProperty(self._fan_on_key, "value").strip()
+        if not enclosure_fan_enabled:
+            return
 
+        fan_on_command = self._global_container_stack.getProperty(self._fan_on_key, "value").strip()
         if not fan_on_command:
             return;
 
-        post_print_command = fan_on_command + " S" + str(post_printing_fan_speed)
-        print_command = fan_on_command + " S" + str(printing_fan_speed);
+        printing_fan_speed = self._global_container_stack.getProperty(self._printing_speed_key, "value")
+        post_printing_fan_speed = self._global_container_stack.getProperty(self._post_printing_speed_key, "value")
 
-        if not enclosure_fan_enabled:
-            return
+        post_printing_fan_speed = min(max(int((post_printing_fan_speed / 100.0) * 255.0), 0), 255)
+        printing_fan_speed = min(max(int((printing_fan_speed / 100.0) * 255.0), 0), 255)
+        post_print_command = fan_on_command + " S" + str(post_printing_fan_speed) + " ;Enclosure Fan\n"
+        print_command = fan_on_command + " S" + str(printing_fan_speed) + " ;Enclosure Fan";
 
         gcode_dict = getattr(scene, "gcode_dict", {})
         if not gcode_dict:  # this also checks for an empty dict
@@ -127,7 +132,16 @@ class PrintTemperatureOffset(Extension):
                 continue
 
             if ";Enclosure Fan" not in gcode_list[1]:
-                #TODO
+                temp_layer = gcode_list[1].split("\n")
+                if len(temp_layer) == 0:
+                    temp_layer.append("")
+                #The first line in this layer is a comment. We will make this the first actual command after the comment
+                temp_layer[0] = temp_layer[0] + "\n" + print_command
+                gcode_list[1] = "\n".join(temp_layer)
+
+                last_layer = gcode_list[-1].split("\n")
+                last_layer[0] = post_print_command + last_layer[0]
+                gcode_list[-1] = "\n".join(last_layer)
                 gcode_dict[plate_id] = gcode_list
             else:
                 Logger.log("d", "Plate %s has already been processed", plate_id)
