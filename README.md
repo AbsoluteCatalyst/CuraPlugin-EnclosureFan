@@ -15,6 +15,12 @@ A Cura plugin to control an enclosure exhaust fan
 ##### Fan On Commnad
 * The command to be issued to turn the fan on. Output will be in the following format: [Fan On Command] S[Fan Speed]. The fan on command will be firmware and configuration dependent. For example, Marlin addresses additional fans with M106 P[Fan Number] S[Fan Speed], so to use Fan 1 as an enclosure fan, set Fan On Command to "M106 P1". Smoothieware allows a subcode to be used, so an example value may be "M106.1"
 
+### Supported Cura Versions
+This has been tested on Cura 3.2.0.
+
+### Installation
+Download [EnclosureFan.curaplugin](https://github.com/Pheneeny/CuraPlugin-EnclosureFan/releases/download/v1.0.0/EnclosureFan.curaplugin), drag and drop the .curaplugin file into Cura, then restart Cura for the plugin to be loaded. You will need to enable the plugin and all of the plugin's settings.
+
 ### Why?
 An enclosure exhaust fan removes fumes, but it will also remove heat from the enclosure. So for materials that like a heated enclosure(like ABS), it may be helpful to slow the enclosure fan down while printing to maintain heat, but then turn the fan on full after printing is complete to eject any remaining fumes.
 
