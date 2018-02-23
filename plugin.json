@@ -1,7 +1,9 @@
 {
-    "name": "Enclosure Fan",
-    "author": "Pheneeny",
-    "version": "1.0.0",
-    "description": "Control an enclosure exhaust fan",
-    "api": 4
+  "name": "Enclosure Fan",
+  "author": "Pheneeny",
+  "author_email": "pheneeny@gmail.com",
+  "website": "https://github.com/Pheneeny/CuraPlugin-EnclosureFan",
+  "version": "1.0.1",
+  "description": "Control an enclosure exhaust fan",
+  "api": 4
 }
