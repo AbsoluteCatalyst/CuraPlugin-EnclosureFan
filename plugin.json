@@ -1,9 +1,9 @@
 {
-  "name": "Enclosure Fan",
-  "author": "Pheneeny",
-  "author_email": "pheneeny@gmail.com",
-  "website": "https://github.com/Pheneeny/CuraPlugin-EnclosureFan",
-  "version": "1.0.1",
-  "description": "Control an enclosure exhaust fan",
-  "api": 4
+    "name": "Enclosure Fan Plugin",
+    "author": "AbsoluteCatalyst",
+    "website": "https://github.com/AbsoluteCatalyst/CuraPlugin-EnclosureFan",
+    "version": "1.0.0",
+    "description": "Adds a per material setting for controlling enclosure fans.",
+    "api": 5,
+    "supported_sdk_versions": ["5.0.0", "6.0.0"]
 }
