@@ -39,8 +39,8 @@ M530 S1 ; SET PRINTING
 
 Omitting these markers will simply place the generated fan G-code at the beginning of your Start G-code and at the end of your End G-code, respectively.
 
-- <font size="+1"><b>For now this plugin only utilizes standard M106 P\<number> S\<speed> G-code commands, with one additional custom parameter; O\<delay>, for the fan timeouts (If used).<font/></b>
-<font size="+0"><i>(Sadly this custom O parameter only works for me as it doesn't exist in popular firmwares right now! Hopefully someday it; or a variant thereof, will!)</i></b><font/>
+- <font size="+1"><b>For now this plugin only utilizes standard M106 P\<number> S\<speed> G-code commands, with one additional ~~custom~~ parameter; O\<delay>, for the fan timeouts (If used).<font/></b>
+<font size="+0"><i>~~(Sadly this custom O parameter only works for me as it doesn't exist in popular firmwares right now! Hopefully someday it; or a variant thereof, will!)~~ Added in Repetier V2 firmware.</i></b><font/>
   
 ## Adds the following options to your Cura's Cooling setting panel:
 ![Options](https://i.imgur.com/U8hFqxY.png)
@@ -65,7 +65,7 @@ Omitting these markers will simply place the generated fan G-code at the beginni
 <dt> Ending Enclosure Fan Timeout(s):</dt> 
 <dd>Sets the time in seconds for a custom M106 parameter "O",  to turn off the fans after said time. Set 0 to disable.</dd>
 <dd><b><font size="+0">The same list input options and caveats from above apply.</b><dd>
-<dd><b><font size="+1">Won't function in most firmwares. Set to 0 by default.</b><dd>
+<dd><b><font size="+1"><strike>Won't function in most firmwares.</strike> Only supported in Repetier V2 firmware at the moment. Set to 0 by default.</b><dd>
 </dl>
 
 <font size="+3"><b>Installation:<font/></b> 
